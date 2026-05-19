@@ -9,6 +9,14 @@ const INC_LIMIT      = 10
 const REVIEW_LIMIT   = 20
 const TIMELINE_LIMIT = 20
 
+const INC_SORT_OPTIONS = [
+  { value: 'created_at-desc',    label: '投稿日（新しい順）',  sort_by: 'created_at',    order: 'desc' },
+  { value: 'created_at-asc',     label: '投稿日（古い順）',    sort_by: 'created_at',    order: 'asc'  },
+  { value: 'occurred_date-desc', label: '発生日（新しい順）',  sort_by: 'occurred_date', order: 'desc' },
+  { value: 'occurred_date-asc',  label: '発生日（古い順）',    sort_by: 'occurred_date', order: 'asc'  },
+  { value: 'title-asc',          label: 'タイトル（昇順）',    sort_by: 'title',         order: 'asc'  },
+]
+
 function fmt(dateStr) {
   return new Date(dateStr).toLocaleDateString('ja-JP')
 }
@@ -527,10 +535,12 @@ export default function SchoolDetailPage() {
   const [school, setSchool]         = useState(null)
   const [tab, setTab]               = useState('courses')
 
-  const [incData, setIncData]         = useState(null)
-  const [incSkip, setIncSkip]         = useState(0)
-  const [incLoading, setIncLoading]   = useState(false)
+  const [incData, setIncData]               = useState(null)
+  const [incSkip, setIncSkip]               = useState(0)
+  const [incLoading, setIncLoading]         = useState(false)
   const [showIncCompose, setShowIncCompose] = useState(false)
+  const [incSort, setIncSort]               = useState('created_at-desc')
+  const [incQ, setIncQ]                     = useState('')
 
   const [reviewData, setReviewData]       = useState(null)
   const [reviewSkip, setReviewSkip]       = useState(0)
@@ -549,10 +559,11 @@ export default function SchoolDetailPage() {
 
   const fetchIncidents = useCallback(() => {
     setIncLoading(true)
-    api.getIncidents({ school_id: id, skip: incSkip, limit: INC_LIMIT })
+    const { sort_by, order } = INC_SORT_OPTIONS.find(o => o.value === incSort)
+    api.getIncidents({ school_id: id, q: incQ || undefined, sort_by, order, skip: incSkip, limit: INC_LIMIT })
       .then(setIncData)
       .finally(() => setIncLoading(false))
-  }, [id, incSkip])
+  }, [id, incSkip, incSort, incQ])
 
   useEffect(() => {
     if (tab === 'incidents') fetchIncidents()
@@ -777,7 +788,29 @@ export default function SchoolDetailPage() {
       {/* 事件一覧 */}
       {tab === 'incidents' && (
         <>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
+            <input
+              placeholder="🔍 タイトル・内容で検索..."
+              value={incQ}
+              onChange={e => { setIncQ(e.target.value); setIncSkip(0) }}
+              style={{
+                flex: 1, minWidth: 160, padding: '0.4rem 0.75rem',
+                border: '1px solid var(--border)', borderRadius: 'var(--r-pill)',
+                background: 'var(--card)', color: 'var(--text)',
+                fontSize: '0.85rem', fontFamily: 'inherit', outline: 'none',
+              }}
+            />
+            <select
+              value={incSort}
+              onChange={e => { setIncSort(e.target.value); setIncSkip(0) }}
+              style={{
+                padding: '0.4rem 0.8rem', border: '1px solid var(--border)',
+                borderRadius: 'var(--r-pill)', background: 'var(--card)',
+                color: 'var(--text)', fontSize: '0.85rem', fontFamily: 'inherit',
+              }}
+            >
+              {INC_SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+            </select>
             {user && (
               <button className="btn btn-primary btn-sm" onClick={() => setShowIncCompose(v => !v)}>
                 {showIncCompose ? '✕ 閉じる' : '＋ 事件を投稿'}

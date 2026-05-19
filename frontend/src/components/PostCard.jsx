@@ -11,12 +11,14 @@ const AVATAR_COLORS = [
 
 export function Avatar({ name, avatarUrl, positionX = 50, positionY = 50, size = 40, style = {} }) {
   const [bg, fg] = AVATAR_COLORS[(name?.charCodeAt(0) ?? 0) % AVATAR_COLORS.length]
-  if (avatarUrl) {
+  const [imgError, setImgError] = useState(false)
+  if (avatarUrl && !imgError) {
     return (
       <img
         src={avatarUrl}
         alt={name}
         className="post-avatar"
+        onError={() => setImgError(true)}
         style={{
           width: size, height: size, objectFit: 'cover', borderRadius: '50%',
           objectPosition: `${positionX}% ${positionY}%`,
