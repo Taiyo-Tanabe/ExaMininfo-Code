@@ -1,5 +1,6 @@
-import os, shutil, uuid
+import io, base64
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
+from PIL import Image
 from sqlalchemy.orm import Session
 
 from ..database import get_db
@@ -122,8 +123,6 @@ def follow_status_route(
     return get_follow_status(db, user_id, current_user)
 
 
-AVATAR_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "static", "avatars")
-
 @router.post("/me/avatar")
 def upload_avatar_route(
     file: UploadFile = File(...),
@@ -132,17 +131,20 @@ def upload_avatar_route(
 ):
     if file.content_type not in ("image/jpeg", "image/png", "image/webp", "image/gif"):
         raise HTTPException(status_code=400, detail="jpeg/png/webp/gifのみ対応しています")
-    os.makedirs(AVATAR_DIR, exist_ok=True)
-    ext = file.filename.rsplit(".", 1)[-1] if "." in file.filename else "jpg"
-    filename = f"{current_user.id}_{uuid.uuid4().hex[:8]}.{ext}"
-    path = os.path.join(AVATAR_DIR, filename)
-    with open(path, "wb") as f:
-        shutil.copyfileobj(file.file, f)
-    url = f"/static/avatars/{filename}"
-    current_user.avatar_url = url
+
+    data = file.file.read()
+    img = Image.open(io.BytesIO(data)).convert("RGB")
+    img.thumbnail((256, 256), Image.LANCZOS)
+
+    buf = io.BytesIO()
+    img.save(buf, format="JPEG", quality=85)
+    b64 = base64.b64encode(buf.getvalue()).decode()
+    data_url = f"data:image/jpeg;base64,{b64}"
+
+    current_user.avatar_url = data_url
     db.commit()
     db.refresh(current_user)
-    return {"avatar_url": url}
+    return {"avatar_url": data_url}
 
 
 @router.get("/{user_id}/followers")
