@@ -35,7 +35,7 @@ function AvatarCropEditor({ avatarUrl, posX, posY, onChange, onSave, saving }) {
         style={{
           width: SIZE, height: SIZE, borderRadius: '50%', overflow: 'hidden',
           cursor: 'grab', border: '3px solid var(--border)', userSelect: 'none',
-          boxShadow: '0 0 0 4px var(--bg)',
+          boxShadow: '0 0 0 4px var(--bg)', touchAction: 'none',
         }}
         onMouseDown={e => { e.preventDefault(); startDrag(e.clientX, e.clientY) }}
         onMouseMove={e => { if (e.buttons === 1) moveDrag(e.clientX, e.clientY) }}
