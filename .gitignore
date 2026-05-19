@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+myprogram-env/
+venv/
+.venv/
+*.egg-info/
+
+# 環境変数（DB パスワード等を含むため絶対にコミットしない）
+.env
+.env.local
+.env.production.local
+
+# フロントエンド
+frontend/node_modules/
+frontend/dist/
+
+# スクレイパー生成ファイル
+scripts/data_raw.csv
+scripts/scrape_out.txt
+scripts/scrape_err.txt
+scripts/import_out.txt
+scripts/import_err.txt
+scripts/tmp_html.txt
+
+# ログ
+*.log
+backend.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Alembic
+alembic/versions/*.pyc
