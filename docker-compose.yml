@@ -1,0 +1,40 @@
+services:
+
+  # ── PostgreSQL データベース ──────────────────────────────────────
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: examininfo
+      POSTGRES_USER: examininfo_user
+      POSTGRES_PASSWORD: examininfo_pass
+    volumes:
+      # ← ここにデータを永続化する（コンテナを消してもデータは残る）
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      # ホストの 5432 → コンテナの 5432（psql で直接接続したいときに使う）
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U examininfo_user -d examininfo"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── FastAPI アプリ（React も同梱） ──────────────────────────────
+  app:
+    build: .
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy   # ← DB の healthcheck が通るまで待ってから起動
+    environment:
+      # db コンテナのホスト名は "db"（サービス名がそのまま使える）
+      DATABASE_URL: postgresql://examininfo_user:examininfo_pass@db:5432/examininfo
+      SECRET_KEY: change_this_to_a_long_random_string
+      ALLOWED_ORIGINS: http://localhost:8000
+    ports:
+      # ホストの 8000 → コンテナの 8000
+      - "8000:8000"
+
+volumes:
+  postgres_data:

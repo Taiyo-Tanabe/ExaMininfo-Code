@@ -1,0 +1,34 @@
+# ローカルの Python 仮想環境（コンテナ内では pip install するので不要）
+myprogram-env/
+
+# Node モジュール（コンテナ内で npm ci するので不要）
+frontend/node_modules/
+
+# React のビルド成果物（Dockerfile の Stage 1 で生成するので不要）
+frontend/dist/
+
+# Python キャッシュ
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+
+# ローカルの環境変数ファイル（コンテナに含めない）
+.env
+.env.local
+
+# DB ダンプファイル
+*.sql
+
+# Git
+.git/
+.gitignore
+
+# エディタ・OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Claude Code 設定
+.claude/
