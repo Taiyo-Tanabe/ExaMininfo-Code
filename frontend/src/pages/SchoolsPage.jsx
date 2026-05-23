@@ -56,8 +56,9 @@ export default function SchoolsPage() {
 
     if (useRelevance) return items  // fuzzyFilter の関連度順をそのまま使う
 
-    if (sort === 'name-desc') return [...items].sort((a, b) => b.name.localeCompare(a.name, 'ja'))
-    return [...items].sort((a, b) => a.name.localeCompare(b.name, 'ja'))
+    const key = s => s.yomi || s.name
+    if (sort === 'name-desc') return [...items].sort((a, b) => key(b).localeCompare(key(a), 'ja'))
+    return [...items].sort((a, b) => key(a).localeCompare(key(b), 'ja'))
   })()
 
   const total = filtered.length
