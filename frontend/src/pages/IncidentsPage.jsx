@@ -39,7 +39,10 @@ function SchoolSearch({ schools, value, onChange }) {
 
   useEffect(() => {
     if (!input.trim()) { setResults([]); setOpen(false); return }
-    const r = fuzzyFilter(schools, input, s => s.name).slice(0, 8)
+    const byName = fuzzyFilter(schools, input, s => s.name)
+    const foundIds = new Set(byName.map(r => r.item.id))
+    const byYomi = fuzzyFilter(schools.filter(s => !foundIds.has(s.id)), input, s => s.yomi || '').map(r => ({ ...r, highlighted: r.item.name }))
+    const r = [...byName, ...byYomi].slice(0, 8)
     setResults(r)
     setOpen(r.length > 0)
   }, [input, schools])

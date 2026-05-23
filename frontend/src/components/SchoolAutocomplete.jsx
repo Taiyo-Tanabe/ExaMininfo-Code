@@ -15,9 +15,17 @@ export default function SchoolAutocomplete({ schools, schoolId, onSelect, placeh
     }
   }, [schoolId, schools])
 
-  const filtered = text
-    ? fuzzyFilter(schools, text, s => s.name).slice(0, 10)
-    : schools.slice(0, 10).map(item => ({ item, highlighted: item.name }))
+  const filtered = (() => {
+    if (!text) return schools.slice(0, 10).map(item => ({ item, highlighted: item.name }))
+    const byName = fuzzyFilter(schools, text, s => s.name)
+    const foundIds = new Set(byName.map(r => r.item.id))
+    const byYomi = fuzzyFilter(
+      schools.filter(s => !foundIds.has(s.id)),
+      text,
+      s => s.yomi || ''
+    ).map(r => ({ ...r, highlighted: r.item.name }))
+    return [...byName, ...byYomi].slice(0, 10)
+  })()
 
   function handleInput(e) {
     setText(e.target.value)
