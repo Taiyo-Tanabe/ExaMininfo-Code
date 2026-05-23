@@ -2,7 +2,6 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
 from .database import engine, SessionLocal
 from . import models
 from .routes import routes_schools, routes_courses, routes_incidents, routes_users, routes_posts, routes_settings, routes_reports
@@ -132,22 +131,6 @@ app.include_router(routes_posts.router)
 app.include_router(routes_settings.router)
 app.include_router(routes_reports.router)
 
-# フロントエンドのビルド成果物を配信（本番用）
-# 開発時は Vite dev server が担当するためスキップ
-_frontend_dist = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
-if os.path.isdir(_frontend_dist):
-    _assets_dir = os.path.join(_frontend_dist, "assets")
-    if os.path.isdir(_assets_dir):
-        app.mount("/assets", StaticFiles(directory=_assets_dir), name="frontend-assets")
-
-    @app.get("/{full_path:path}", include_in_schema=False)
-    def serve_frontend(full_path: str):
-        # dist/ 直下にファイルがあればそれを返す（SVGロゴ等）
-        candidate = os.path.join(_frontend_dist, full_path)
-        if full_path and os.path.isfile(candidate):
-            return FileResponse(candidate)
-        return FileResponse(os.path.join(_frontend_dist, "index.html"))
-else:
-    @app.get("/")
-    def root():
-        return {"message": "ExaMininfo API — frontend not built"}
+@app.get("/")
+def root():
+    return {"message": "ExaMininfo API"}
