@@ -1,15 +1,16 @@
 """
-Docker起動スクリプト。
+起動スクリプト（Docker / Render 共用）。
 - 新規DB: create_all でテーブルを全作成 → alembic stamp head
 - 既存DB: alembic upgrade head で差分マイグレーションのみ実行
+PORT 環境変数が設定されていれば使用（Render）、なければ 8000（Docker）。
 """
+import os
 import subprocess
 from sqlalchemy import text
 from blog.database import engine
 from blog import models
 
 with engine.connect() as conn:
-    # alembic_version テーブルが存在するか確認
     row = conn.execute(
         text("SELECT to_regclass('public.alembic_version')")
     ).scalar()
@@ -24,8 +25,9 @@ else:
     print("=== 既存DB: alembic upgrade head を実行します ===")
     subprocess.run(["alembic", "upgrade", "head"], check=True)
 
-print("=== uvicorn を起動します ===")
+port = os.getenv("PORT", "8000")
+print(f"=== uvicorn を起動します (port={port}) ===")
 subprocess.run(
-    ["uvicorn", "blog.main:app", "--host", "0.0.0.0", "--port", "8000"],
+    ["uvicorn", "blog.main:app", "--host", "0.0.0.0", "--port", port],
     check=True,
 )
