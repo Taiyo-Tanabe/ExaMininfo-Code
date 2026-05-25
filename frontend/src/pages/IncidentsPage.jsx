@@ -331,30 +331,28 @@ function IncidentReportButton({ user, incidentId }) {
         title="通報"
       >🚩</button>
       {open && (
-        <div style={{
-          position: 'absolute', right: 0, top: '100%', zIndex: 200,
-          background: 'var(--card)', border: '1px solid var(--border)',
-          borderRadius: 'var(--r-md)', padding: '0.75rem', width: 220,
-          boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
-        }}>
-          <p style={{ fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.4rem' }}>この事件を通報</p>
-          <textarea
-            value={reason}
-            onChange={e => setReason(e.target.value)}
-            placeholder="理由（任意）"
-            rows={2}
-            style={{
-              width: '100%', fontSize: '0.82rem', resize: 'none',
-              background: 'var(--bg)', border: '1px solid var(--border)',
-              borderRadius: 'var(--r-sm)', padding: '0.3rem 0.4rem',
-              color: 'var(--text)', fontFamily: 'inherit',
-            }}
-          />
-          <div style={{ display: 'flex', gap: '0.4rem', marginTop: '0.4rem' }}>
-            <button className="btn btn-ghost btn-sm" onClick={() => setOpen(false)}>キャンセル</button>
-            <button className="btn btn-primary btn-sm" onClick={handleReport} disabled={sending}>
-              {sending ? '送信中...' : '送信'}
-            </button>
+        <div
+          style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          onClick={() => setOpen(false)}
+        >
+          <div
+            style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', padding: '1.25rem', width: 280, boxShadow: '0 8px 32px rgba(0,0,0,0.3)' }}
+            onClick={e => e.stopPropagation()}
+          >
+            <p style={{ fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.4rem' }}>この事件を通報</p>
+            <textarea
+              value={reason}
+              onChange={e => setReason(e.target.value)}
+              placeholder="理由（任意）"
+              rows={3}
+              style={{ width: '100%', fontSize: '0.82rem', resize: 'none', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--r-sm)', padding: '0.3rem 0.4rem', color: 'var(--text)', fontFamily: 'inherit' }}
+            />
+            <div style={{ display: 'flex', gap: '0.4rem', marginTop: '0.4rem' }}>
+              <button className="btn btn-ghost btn-sm" onClick={() => setOpen(false)}>キャンセル</button>
+              <button className="btn btn-primary btn-sm" onClick={handleReport} disabled={sending}>
+                {sending ? '送信中...' : '送信'}
+              </button>
+            </div>
           </div>
         </div>
       )}

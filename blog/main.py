@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from .database import engine, SessionLocal
 from . import models
 from .routes import routes_schools, routes_courses, routes_incidents, routes_users, routes_posts, routes_settings, routes_reports
@@ -58,7 +59,18 @@ app.include_router(routes_posts.router)
 app.include_router(routes_settings.router)
 app.include_router(routes_reports.router)
 
+# React フロントエンド配信
+_frontend_dist = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
+if os.path.exists(_frontend_dist):
+    app.mount("/assets", StaticFiles(directory=os.path.join(_frontend_dist, "assets")), name="frontend-assets")
 
-@app.get("/")
-def root():
-    return {"message": "ExaMininfo API"}
+    @app.get("/")
+    def serve_index():
+        return FileResponse(os.path.join(_frontend_dist, "index.html"))
+
+    @app.get("/{full_path:path}")
+    def serve_frontend(full_path: str):
+        file_path = os.path.join(_frontend_dist, full_path)
+        if os.path.isfile(file_path):
+            return FileResponse(file_path)
+        return FileResponse(os.path.join(_frontend_dist, "index.html"))

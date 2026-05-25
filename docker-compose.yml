@@ -22,7 +22,10 @@ services:
 
   # ── FastAPI アプリ（React も同梱） ──────────────────────────────
   app:
-    build: .
+    build:
+      context: .
+      args:
+        VITE_API_BASE: http://localhost:8000
     restart: always
     depends_on:
       db:
@@ -31,7 +34,7 @@ services:
       # db コンテナのホスト名は "db"（サービス名がそのまま使える）
       DATABASE_URL: postgresql://examininfo_user:examininfo_pass@db:5432/examininfo
       SECRET_KEY: change_this_to_a_long_random_string
-      ALLOWED_ORIGINS: http://localhost:8000
+      ALLOWED_ORIGINS: http://localhost:8000,http://127.0.0.1:8000
     ports:
       # ホストの 8000 → コンテナの 8000
       - "8000:8000"

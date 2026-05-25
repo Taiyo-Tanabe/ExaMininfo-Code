@@ -11,6 +11,8 @@ RUN npm ci
 
 # ソース全体をコピーしてビルド
 COPY frontend/ ./
+ARG VITE_API_BASE=http://localhost:8000
+RUN echo "VITE_API_BASE=${VITE_API_BASE}" > .env.production.local
 RUN npm run build
 
 
