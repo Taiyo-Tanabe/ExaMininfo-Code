@@ -21,10 +21,12 @@ export default function SchoolsPage() {
   const [sort, setSort]             = useState('name-asc')
   const [skip, setSkip]             = useState(0)
   const [loading, setLoading]       = useState(true)
+  const [error, setError]           = useState(false)
   const navigate = useNavigate()
 
-  useEffect(() => {
+  function load() {
     setLoading(true)
+    setError(false)
     Promise.all([
       api.getSchools({ limit: 1000 }),
       api.getSiteContent('home_description').catch(() => ({ value: '' })),
@@ -33,8 +35,11 @@ export default function SchoolsPage() {
       setAllSchools(schools.items)
       setHomeDesc(desc.value)
       if (hero.value) setHeroTitle(hero.value)
-    }).finally(() => setLoading(false))
-  }, [])
+    }).catch(() => setError(true))
+    .finally(() => setLoading(false))
+  }
+
+  useEffect(() => { load() }, [])
 
   const filtered = (() => {
     let items = allSchools
@@ -109,6 +114,11 @@ export default function SchoolsPage() {
 
         {loading ? (
           <div className="loading">読み込み中...</div>
+        ) : error ? (
+          <div style={{ textAlign: 'center', padding: '3rem' }}>
+            <p style={{ color: 'var(--muted)', marginBottom: '1rem' }}>サーバーに接続できませんでした。</p>
+            <button className="btn btn-primary" onClick={load}>再試行</button>
+          </div>
         ) : (
           <>
             <p className="section-title">
