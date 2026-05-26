@@ -58,6 +58,41 @@ function UsersTab() {
   )
 }
 
+// ── 承認待ちユーザー ──
+function PendingUsersTab() {
+  const [data, setData] = useState(null)
+
+  function load() { api.getPendingUsers({ limit: 200 }).then(setData) }
+  useEffect(load, [])
+
+  async function handleApprove(userId, name) {
+    if (!confirm(`「${name}」を承認しますか？`)) return
+    try { await api.approveUser(userId); load() }
+    catch (e) { alert(e.message) }
+  }
+
+  const items = data?.items ?? []
+
+  return (
+    <div>
+      {items.length === 0 && (
+        <p className="muted" style={{ textAlign: 'center', padding: '2rem' }}>承認待ちのユーザーはいません</p>
+      )}
+      {items.map(u => (
+        <div key={u.id} className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
+          <div>
+            <p style={{ fontWeight: 700 }}>{u.name}</p>
+            <p className="muted" style={{ fontSize: '0.85rem' }}>{u.email}</p>
+          </div>
+          <button className="btn btn-primary btn-sm" onClick={() => handleApprove(u.id, u.name)}>
+            承認する
+          </button>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 // ── 学校管理 ──
 function SchoolsTab() {
   const [data, setData]       = useState(null)
@@ -768,6 +803,7 @@ export default function AdminPage() {
   if (!user || user.role !== 'admin') return <Navigate to="/" replace />
 
   const TABS = [
+    { key: 'pending',  label: '承認待ち' },
     { key: 'users',    label: 'ユーザー' },
     { key: 'schools',  label: '大学' },
     { key: 'courses',  label: 'コース' },
@@ -788,6 +824,7 @@ export default function AdminPage() {
           <div key={t.key} className={`tab ${tab === t.key ? 'active' : ''}`} onClick={() => setTab(t.key)}>{t.label}</div>
         ))}
       </div>
+      {tab === 'pending'   && <PendingUsersTab />}
       {tab === 'users'     && <UsersTab />}
       {tab === 'schools'   && <SchoolsTab />}
       {tab === 'courses'   && <CoursesTab />}

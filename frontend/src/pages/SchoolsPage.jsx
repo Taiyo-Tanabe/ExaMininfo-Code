@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { api } from '../api'
 import { fuzzyFilter } from '../utils/fuzzy'
+import { getReading, getPrefectureReading } from '../utils/kanjiReading'
 import Pagination from '../components/Pagination'
 
 const PAGE = 12
@@ -46,17 +47,20 @@ export default function SchoolsPage() {
     let useRelevance = false
 
     if (q.trim()) {
-      const fuzzyResults = fuzzyFilter(items, q, s => [s.name, s.yomi].filter(Boolean).join(' '))
+      const fuzzyResults = fuzzyFilter(items, q, s => {
+        const reading = s.yomi || getReading(s.name)
+        return [s.name, reading].filter(Boolean).join(' ')
+      })
       items = fuzzyResults.map(r => r.item)
       useRelevance = sort === 'relevance'
     }
 
     if (prefecture.trim()) {
-      const pref = prefecture.trim().toLowerCase()
-      items = items.filter(s =>
-        s.prefecture.toLowerCase().includes(pref) ||
-        (s.prefecture_yomi && s.prefecture_yomi.toLowerCase().includes(pref))
-      )
+      const prefResults = fuzzyFilter(items, prefecture, s => {
+        const reading = s.prefecture_yomi || getPrefectureReading(s.prefecture)
+        return [s.prefecture, reading].filter(Boolean).join(' ')
+      })
+      items = prefResults.map(r => r.item)
     }
 
     if (useRelevance) return items  // fuzzyFilter の関連度順をそのまま使う

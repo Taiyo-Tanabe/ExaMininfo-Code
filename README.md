@@ -24,6 +24,8 @@
 - ユーザー認証（JWT）
 - フォロー機能
 - リアクション（いいね）
+- **団体（サークル）管理**（作成・加入申請・メンバー管理・アイコン設定）
+- **イベント管理**（作成・参加申請・閲覧制限・承認フロー）
 - 管理者機能
 
 ---
@@ -37,6 +39,16 @@
 - ローマ字 → ひらがな変換
 - 完全一致・前方一致・部分一致でスコアを付けて優先度を決定
 - マッチした文字をハイライト表示
+- DBに読みデータがない大学もクライアント側の漢字→ひらがなマップで補完
+
+### 団体・イベント管理
+
+サークルや学生団体を中心としたイベント参加管理機能を実装しました。
+
+- 団体の作成・編集・削除、アイコン画像のアップロードと表示位置調整
+- 加入申請フロー（申請→承認/却下）、管理者による案内文の設定
+- イベントの閲覧承認・参加承認フロー（承認者のみ詳細を閲覧可能）
+- 大学ページから直接その大学の団体・イベントを作成可能
 
 ### 偏差値データの自動収集
 
@@ -144,7 +156,9 @@ ExaMIninfo/
 │   │   ├── routes_users.py
 │   │   ├── routes_posts.py
 │   │   ├── routes_settings.py
-│   │   └── routes_reports.py
+│   │   ├── routes_reports.py
+│   │   ├── routes_orgs.py       # 団体管理
+│   │   └── routes_events.py     # イベント管理
 │   ├── functions/               # ビジネスロジック
 │   │   ├── functions_schools.py
 │   │   ├── functions_courses.py
@@ -153,7 +167,9 @@ ExaMIninfo/
 │   │   ├── functions_posts.py
 │   │   ├── functions_reviews.py
 │   │   ├── functions_settings.py
-│   │   └── functions_reports.py
+│   │   ├── functions_reports.py
+│   │   ├── functions_orgs.py    # 団体・メンバー管理
+│   │   └── functions_events.py  # イベント・参加管理
 │   ├── models.py                # DBテーブル定義
 │   ├── schemas.py               # APIの入出力型定義
 │   ├── auth.py                  # JWT認証
@@ -175,7 +191,15 @@ ExaMIninfo/
 │   │   │   ├── AdminPage.jsx
 │   │   │   ├── AboutPage.jsx
 │   │   │   ├── LoginPage.jsx
-│   │   │   └── LegalPage.jsx
+│   │   │   ├── LegalPage.jsx
+│   │   │   ├── OrgsPage.jsx         # 団体一覧
+│   │   │   ├── OrgDetailPage.jsx    # 団体詳細
+│   │   │   ├── OrgFormPage.jsx      # 団体作成・編集
+│   │   │   ├── OrgDashboardPage.jsx # 団体管理（メンバー・承認・設定）
+│   │   │   ├── OrgIconEditPage.jsx  # 団体アイコン編集
+│   │   │   ├── EventsPage.jsx       # イベント一覧
+│   │   │   ├── EventDetailPage.jsx  # イベント詳細
+│   │   │   └── EventFormPage.jsx    # イベント作成・編集
 │   │   ├── components/          # 共通UI部品
 │   │   │   ├── Navbar.jsx
 │   │   │   ├── Footer.jsx
@@ -184,7 +208,8 @@ ExaMIninfo/
 │   │   │   ├── CourseSelect.jsx
 │   │   │   └── Pagination.jsx
 │   │   ├── utils/
-│   │   │   └── fuzzy.js         # ローマ字・ひらがな変換＋あいまい検索
+│   │   │   ├── fuzzy.js         # ローマ字・ひらがな変換＋あいまい検索
+│   │   │   └── kanjiReading.js  # 漢字→ひらがな読みマップ
 │   │   ├── api.js               # API通信
 │   │   ├── AuthContext.jsx      # 認証状態管理
 │   │   ├── App.jsx

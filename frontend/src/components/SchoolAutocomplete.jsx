@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { fuzzyFilter } from '../utils/fuzzy'
+import { getReading } from '../utils/kanjiReading'
 
 export default function SchoolAutocomplete({ schools, schoolId, onSelect, placeholder = '学校名を入力...' }) {
   const [text, setText] = useState('')
@@ -17,14 +18,11 @@ export default function SchoolAutocomplete({ schools, schoolId, onSelect, placeh
 
   const filtered = (() => {
     if (!text) return schools.slice(0, 10).map(item => ({ item, highlighted: item.name }))
-    const byName = fuzzyFilter(schools, text, s => s.name)
-    const foundIds = new Set(byName.map(r => r.item.id))
-    const byYomi = fuzzyFilter(
-      schools.filter(s => !foundIds.has(s.id)),
-      text,
-      s => s.yomi || ''
-    ).map(r => ({ ...r, highlighted: r.item.name }))
-    return [...byName, ...byYomi].slice(0, 10)
+    const results = fuzzyFilter(schools, text, s => {
+      const reading = s.yomi || getReading(s.name)
+      return [s.name, reading].filter(Boolean).join(' ')
+    })
+    return results.slice(0, 10).map(r => ({ ...r, highlighted: r.item.name }))
   })()
 
   function handleInput(e) {

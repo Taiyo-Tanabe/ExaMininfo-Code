@@ -17,11 +17,14 @@ def register_user(db: Session, data: schemas.UserCreate):
     if db.query(models.User).filter(models.User.email == data.email).first():
         raise HTTPException(status_code=400, detail="Email already registered")
 
+    # 最初のユーザーはadminとして自動承認
+    is_first = db.query(models.User).count() == 0
     user = models.User(
         name=data.name,
         email=data.email,
         password=hash_password(data.password),
-        role="user",
+        role="admin" if is_first else "user",
+        is_approved=is_first,
     )
     db.add(user)
     db.commit()
@@ -35,7 +38,6 @@ def login_user(db: Session, data: schemas.UserLogin):
         raise HTTPException(status_code=401, detail="Invalid email")
     if not verify_password(data.password, user.password):
         raise HTTPException(status_code=401, detail="Invalid password")
-
     token = create_access_token(data={"sub": str(user.id), "role": user.role})
     return {"access_token": token, "token_type": "bearer"}
 
@@ -212,3 +214,20 @@ def delete_self(db: Session, password: str, current_user: models.User):
     db.delete(current_user)
     db.commit()
     return {"message": "account deleted"}
+
+
+def list_pending_users(db: Session, skip: int = 0, limit: int = 100) -> dict:
+    query = db.query(models.User).filter(models.User.is_approved == False)
+    total = query.count()
+    items = query.offset(skip).limit(limit).all()
+    return {"total": total, "skip": skip, "limit": limit, "items": items}
+
+
+def approve_user(db: Session, user_id: int) -> models.User:
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    user.is_approved = True
+    db.commit()
+    db.refresh(user)
+    return user

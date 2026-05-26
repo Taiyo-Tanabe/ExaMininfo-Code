@@ -11,6 +11,7 @@ from ..functions.functions_users import (
     update_user_role, get_user_public, follow_user, unfollow_user,
     get_follow_status, get_followers_list, get_following_list,
     delete_user, delete_self, list_blocked_emails, unblock_email,
+    list_pending_users, approve_user,
 )
 from ..functions.functions_reviews import list_user_reviews
 
@@ -175,6 +176,25 @@ def get_user_reviews_route(
     db: Session = Depends(get_db),
 ):
     return list_user_reviews(db, user_id, skip, limit)
+
+
+@router.get("/pending", response_model=schemas.Page[schemas.UserPendingOut])
+def list_pending_users_route(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+    _ = Depends(require_roles(["admin"])),
+):
+    return list_pending_users(db, skip, limit)
+
+
+@router.patch("/{user_id}/approve", response_model=schemas.UserOut)
+def approve_user_route(
+    user_id: int,
+    db: Session = Depends(get_db),
+    _ = Depends(require_roles(["admin"])),
+):
+    return approve_user(db, user_id)
 
 
 @router.get("/blocked-emails")
