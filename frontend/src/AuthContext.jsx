@@ -9,7 +9,8 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     if (localStorage.getItem('token')) {
-      api.getMe()
+      const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 8000))
+      Promise.race([api.getMe(), timeout])
         .then(setUser)
         .catch(() => localStorage.removeItem('token'))
         .finally(() => setLoading(false))
@@ -38,7 +39,11 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider value={{ user, login, logout, loading, refreshUser }}>
-      {!loading && children}
+      {loading ? (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+          <div className="loading">読み込み中...</div>
+        </div>
+      ) : children}
     </AuthContext.Provider>
   )
 }
