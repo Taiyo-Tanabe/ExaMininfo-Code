@@ -70,7 +70,7 @@ export default function EventsPage() {
     const params = { limit: 100 }
     if (schoolId)   params.school_id   = schoolId
     if (department) params.department  = department
-    if (myOrgs)     params.my_orgs     = true
+    if (myOrgs && user) params.my_orgs = true
     api.getEvents(params)
       .then(setData)
       .catch(() => setError('読み込みに失敗しました'))

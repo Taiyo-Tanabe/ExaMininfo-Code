@@ -78,13 +78,14 @@ export default function EventDetailPage() {
   const [noteEditing, setNoteEditing] = useState(false)
 
   function loadEvent() { return api.getEvent(eventId).then(e => { setEvent(e); setNote(e.my_note ?? '') }) }
-  function loadAttendees(status = tab) { return api.getAttendees(eventId, { status }).then(setAttendees) }
+  function loadAttendees(status = tab) { return api.getAttendees(eventId, { status }).then(setAttendees).catch(() => {}) }
 
   useEffect(() => {
     setLoading(true)
-    Promise.all([loadEvent(), loadAttendees()])
-      .finally(() => setLoading(false))
-  }, [eventId])
+    const loads = [loadEvent()]
+    if (user) loads.push(loadAttendees())
+    Promise.all(loads).finally(() => setLoading(false))
+  }, [eventId, user])
 
   async function handleAttend(newStatus) {
     try {

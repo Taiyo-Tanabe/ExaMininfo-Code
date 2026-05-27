@@ -206,16 +206,16 @@ export default function OrgDetailPage() {
         <>
           <h2 style={{ margin: '0 0 1rem', fontSize: '1.1rem' }}>メンバー</h2>
           <div className="card" style={{ padding: '0.5rem 1rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.6rem 0', borderBottom: members.length > 0 ? '1px solid var(--border)' : 'none' }}>
+            <Link to={`/users/${org.created_by}`} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.6rem 0', borderBottom: members.length > 0 ? '1px solid var(--border)' : 'none', textDecoration: 'none', color: 'inherit' }}>
               <Avatar name={org.creator_name} url={org.creator_avatar_url} posX={org.creator_avatar_position_x} posY={org.creator_avatar_position_y} size={28} />
               <span style={{ fontWeight: 500 }}>{org.creator_name}</span>
-            </div>
+            </Link>
             {members.map((m, i) => (
-              <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.6rem 0', borderBottom: i < members.length - 1 ? '1px solid var(--border)' : 'none' }}>
+              <Link key={m.id} to={`/users/${m.user_id}`} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.6rem 0', borderBottom: i < members.length - 1 ? '1px solid var(--border)' : 'none', textDecoration: 'none', color: 'inherit' }}>
                 <Avatar name={m.user_name} url={m.user_avatar_url} posX={m.user_avatar_position_x} posY={m.user_avatar_position_y} size={28} />
                 <span style={{ fontWeight: 500 }}>{m.user_name}</span>
                 {m.role === 'admin' && <RoleBadge role="admin" />}
-              </div>
+              </Link>
             ))}
           </div>
         </>
