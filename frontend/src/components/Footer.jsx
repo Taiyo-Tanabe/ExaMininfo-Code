@@ -15,7 +15,7 @@ export default function Footer() {
       flexWrap: 'wrap',
     }}>
       <Link to="/about" style={{ color: 'var(--muted)', textDecoration: 'none' }}>このサイトについて</Link>
-      <Link to="/legal" style={{ color: 'var(--muted)', textDecoration: 'none' }}>法的情報</Link>
+      <Link to="/legal" style={{ color: 'var(--muted)', textDecoration: 'none' }}>利用規約・プライバシー</Link>
       <span>© 2026 ExaMininfo</span>
     </footer>
   )
