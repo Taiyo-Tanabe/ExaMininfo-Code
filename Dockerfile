@@ -27,7 +27,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # FastAPI アプリ本体
-COPY blog/ blog/
+COPY backend/ backend/
 
 # Alembic マイグレーション
 COPY alembic/ alembic/
