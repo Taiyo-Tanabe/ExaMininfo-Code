@@ -39,15 +39,6 @@
 - マッチした文字をハイライト表示
 - DBに読みデータがない大学もクライアント側の漢字→ひらがなマップで補完
 
-### 団体・イベント管理
-
-サークルや学生団体を中心としたイベント参加管理機能を実装しました。
-
-- 団体の作成・編集・削除、アイコン画像のアップロードと表示位置調整
-- 加入申請フロー（申請→承認/却下）、管理者による案内文の設定
-- イベントの閲覧承認・参加承認フロー（承認者のみ詳細を閲覧可能）
-- 大学ページから直接その大学の団体・イベントを作成可能
-
 ### 偏差値データの自動収集
 
 外部サイトから47都道府県分の偏差値データをスクレイピングし、DBに自動投入するパイプラインを構築しました。サーバーへの負荷を考慮し、リクエスト間隔・同時接続数を制限しています。
@@ -109,7 +100,7 @@ cp .env.example .env
 
 ```bash
 pip install -r requirements.txt
-uvicorn blog.main:app --reload --port 8000
+uvicorn backend.main:app --reload --port 8000
 ```
 
 **フロントエンド：**
@@ -146,7 +137,7 @@ python scripts/import_db.py
 
 ```
 ExaMIninfo/
-├── blog/                        # バックエンド（FastAPI）
+├── backend/                     # バックエンド（FastAPI）
 │   ├── routes/                  # APIエンドポイント定義
 │   │   ├── routes_schools.py
 │   │   ├── routes_courses.py
@@ -154,9 +145,7 @@ ExaMIninfo/
 │   │   ├── routes_users.py
 │   │   ├── routes_posts.py
 │   │   ├── routes_settings.py
-│   │   ├── routes_reports.py
-│   │   ├── routes_orgs.py       # 団体管理
-│   │   └── routes_events.py     # イベント管理
+│   │   └── routes_reports.py
 │   ├── functions/               # ビジネスロジック
 │   │   ├── functions_schools.py
 │   │   ├── functions_courses.py
@@ -165,9 +154,7 @@ ExaMIninfo/
 │   │   ├── functions_posts.py
 │   │   ├── functions_reviews.py
 │   │   ├── functions_settings.py
-│   │   ├── functions_reports.py
-│   │   ├── functions_orgs.py    # 団体・メンバー管理
-│   │   └── functions_events.py  # イベント・参加管理
+│   │   └── functions_reports.py
 │   ├── models.py                # DBテーブル定義
 │   ├── schemas.py               # APIの入出力型定義
 │   ├── auth.py                  # JWT認証
@@ -189,15 +176,7 @@ ExaMIninfo/
 │   │   │   ├── AdminPage.jsx
 │   │   │   ├── AboutPage.jsx
 │   │   │   ├── LoginPage.jsx
-│   │   │   ├── LegalPage.jsx
-│   │   │   ├── OrgsPage.jsx         # 団体一覧
-│   │   │   ├── OrgDetailPage.jsx    # 団体詳細
-│   │   │   ├── OrgFormPage.jsx      # 団体作成・編集
-│   │   │   ├── OrgDashboardPage.jsx # 団体管理（メンバー・承認・設定）
-│   │   │   ├── OrgIconEditPage.jsx  # 団体アイコン編集
-│   │   │   ├── EventsPage.jsx       # イベント一覧
-│   │   │   ├── EventDetailPage.jsx  # イベント詳細
-│   │   │   └── EventFormPage.jsx    # イベント作成・編集
+│   │   │   └── LegalPage.jsx
 │   │   ├── components/          # 共通UI部品
 │   │   │   ├── Navbar.jsx
 │   │   │   ├── Footer.jsx
