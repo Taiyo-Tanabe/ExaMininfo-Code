@@ -455,10 +455,7 @@ select.input option { background: var(--card); color: var(--text); }
   font-weight: 900;
   margin-bottom: 1.5rem;
   letter-spacing: -0.5px;
-  background: linear-gradient(90deg, var(--text) 0%, var(--text-dim) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text);
 }
 .divider { border-top: 1px solid var(--border); padding-top: 0.75rem; margin-top: 0.75rem; }
 
@@ -924,7 +921,7 @@ select.input option { background: var(--card); color: var(--text); }
   border-bottom: 1px solid var(--border);
   margin-bottom: 0;
 }
-.profile-stat { cursor: pointer; text-align: center; transition: opacity 0.15s; }
+.profile-stat { cursor: pointer; text-align: center; transition: opacity 0.15s; background: none; border: none; color: inherit; padding: 0; }
 .profile-stat:hover { opacity: 0.75; }
 .profile-stat-num { font-weight: 800; font-size: 1.1rem; color: var(--text); }
 .profile-stat-label { font-size: 0.75rem; color: var(--muted); }
