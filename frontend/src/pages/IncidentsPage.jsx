@@ -6,6 +6,7 @@ import { fuzzyFilter } from '../utils/fuzzy'
 import Pagination from '../components/Pagination'
 import PostCard, { MentionTextarea, Avatar } from '../components/PostCard'
 import SchoolAutocomplete from '../components/SchoolAutocomplete'
+import CourseSelect from '../components/CourseSelect'
 
 const LIMIT = 10
 
@@ -136,7 +137,7 @@ function IncidentComposeForm({ schools, onCreated, onCancel }) {
           onChange={e => setDescription(e.target.value)}
           rows={3}
         />
-        <input style={inputStyle} placeholder="コース名（任意）" value={courseName} onChange={e => setCourseName(e.target.value)} />
+        <CourseSelect schoolId={schoolId} value={courseName} onChange={setCourseName} label="関連学科・コース（任意）" />
         <div style={{ display: 'flex', gap: '0.5rem' }}>
           <input style={{ ...inputStyle, flex: 1 }} placeholder="年" type="number" min="1900" max="2100" value={year}  onChange={e => setYear(e.target.value)} />
           <input style={{ ...inputStyle, flex: 1 }} placeholder="月" type="number" min="1" max="12"   value={month} onChange={e => setMonth(e.target.value)} />
@@ -193,7 +194,7 @@ function IncidentEditForm({ inc, schools, onSaved, onCancel }) {
     <div style={{ marginTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
       <input style={inputStyle} placeholder="タイトル" value={title} onChange={e => setTitle(e.target.value)} />
       <textarea style={{ ...inputStyle, resize: 'vertical', minHeight: 60 }} placeholder="詳細（任意）" value={description} onChange={e => setDescription(e.target.value)} rows={2} />
-      <input style={inputStyle} placeholder="コース名（任意）" value={courseName} onChange={e => setCourseName(e.target.value)} />
+      <CourseSelect schoolId={inc.school_id} value={courseName} onChange={setCourseName} label="関連学科・コース（任意）" />
       <div style={{ display: 'flex', gap: '0.4rem' }}>
         <input style={{ ...inputStyle, flex: 1 }} placeholder="年" type="number" value={year}  onChange={e => setYear(e.target.value)} />
         <input style={{ ...inputStyle, flex: 1 }} placeholder="月" type="number" value={month} onChange={e => setMonth(e.target.value)} />

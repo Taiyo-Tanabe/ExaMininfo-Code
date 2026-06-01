@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { api } from '../api'
 
-export default function CourseSelect({ schoolId, value, onChange }) {
+export default function CourseSelect({ schoolId, value, onChange, label = '投稿内容のコースを選択' }) {
   const [courses, setCourses] = useState([])
 
   useEffect(() => {
@@ -14,9 +14,9 @@ export default function CourseSelect({ schoolId, value, onChange }) {
 
   return (
     <div className="form-group">
-      <label>投稿内容のコースを選択</label>
+      <label>{label}</label>
       <select value={value} onChange={e => onChange(e.target.value)}>
-        <option value="">投稿内容のコースを選択</option>
+        <option value="">{label}</option>
         {courses.map(c => (
           <option key={c.id} value={c.name}>{c.name}</option>
         ))}
