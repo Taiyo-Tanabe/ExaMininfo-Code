@@ -51,11 +51,6 @@
 
 Renderの無料プランではデプロイのたびにファイルが消えるため、画像をBase64エンコードしてDBに直接保存する方式を採用。S3等の外部ストレージを使わずに永続化を実現しました。
 
-### Renderスリープ対策
-
-GitHub Actionsのcronジョブで5分ごとにバックエンドへpingを送り、Renderの無料プランによるアイドルスリープを防止しています。
-
----
 
 ## 学んだこと
 
@@ -73,7 +68,7 @@ GitHub Actionsのcronジョブで5分ごとにバックエンドへpingを送り
 | ORM | SQLAlchemy |
 | マイグレーション | Alembic |
 | 認証 | JWT（python-jose / bcrypt） |
-| インフラ | Vercel（フロント）/ Render（バックエンド）/ Neon（DB） |
+| インフラ | Vercel（フロント）/ Railway（バックエンド）/ Neon（DB） |
 | コンテナ | Docker / Docker Compose |
 
 ---
@@ -85,7 +80,7 @@ GitHub Actionsのcronジョブで5分ごとにバックエンドへpingを送り
   ↓
 Vercel（React）
   ↓ API通信
-Render（FastAPI）
+Railway（FastAPI）
   ↓
 Neon（PostgreSQL）
 ```
